@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 
 class Demand {
   String name;
@@ -21,10 +23,23 @@ class Demand {
 }
 
 class DemandViewModel {
+  
+
   static List<Demand> demands;
 
   static Future loadDemands() async {
     try {
+      /*
+      final databaseReference = FirebaseDatabase.instance.reference();
+      
+      databaseReference.once().then((DataSnapshot dataSnapshot) {
+        demands = [
+          Demand(data)
+        ]
+      });
+
+       */
+
       demands = new List<Demand>();
       String jsonString = await rootBundle.loadString('assets/demands.json');
       Map parsedJson = json.decode(jsonString);
@@ -32,6 +47,7 @@ class DemandViewModel {
       for (int i = 0; i < categoryJson.length; i++) {
         demands.add(Demand.fromJson(categoryJson[i]));
       }
+      
     } catch (e) {
       print(e);
     }
