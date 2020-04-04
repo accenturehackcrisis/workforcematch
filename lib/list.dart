@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:workforcematch/infopage.dart';
 import 'resources.dart';
 import 'demands.dart';
-import 'main.dart';
 
 class ResourceList extends StatefulWidget {
   @override
@@ -34,7 +33,14 @@ class ResourceListState extends State<ResourceList>
 
         return ListTile(
             title: item.buildTitle(context),
-            subtitle: item.buildSubtitle(context));
+            subtitle: item.buildSubtitle(context),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ResourceInfoPage(company: company)));
+            });
       },
     );
   }
@@ -62,10 +68,9 @@ class DemandListState extends State<DemandList>
           subtitle: item.buildSubtitle(context),
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(
-                builder: (context) => DemandInfoPage( company : company)
-            )
-            );
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DemandInfoPage(company: company)));
           },
         );
       },
