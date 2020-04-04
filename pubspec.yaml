@@ -42,7 +42,9 @@ flutter:
 
   assets:
     - assets/skills.json
-    - assets/companies.json
+    - assets/demands.json
+    - assets/resources.json
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

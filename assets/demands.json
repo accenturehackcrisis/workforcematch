@@ -1,0 +1,16 @@
+{
+  "demands": [
+    {
+      "name": "Cat Buyers",
+      "fieldOfWork": "Cat Buyer Home",
+      "location": "Gothenburg",
+      "description": "I want a cat"
+    },
+    {
+      "name": "John Bauer Gymnasiet",
+      "fieldOfWork": "School",
+      "location": "Stockholm",
+      "description" : "Clean our school"
+    }
+  ]
+}
