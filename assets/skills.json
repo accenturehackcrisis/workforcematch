@@ -1,0 +1,17 @@
+{
+  "skills" : [{
+      "skill" : "Software Engineering"
+    }, {
+      "skill" : "Construction Working"
+    }, {
+      "skill" : "Teaching"
+    }, {
+      "skill" : "Dog walking"
+    }, {
+      "skill" : "Driver's License"
+    }, {
+      "skill" : "Truck License"
+    }
+  ]
+
+}

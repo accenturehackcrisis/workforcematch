@@ -1,0 +1,34 @@
+{
+  "companies": [
+    {
+      "name": "Accenture",
+      "fieldOfWork": "Consulting",
+      "location": "Stockholm"
+    },
+    {
+      "name": "Telia",
+      "fieldOfWork": "Telecom",
+      "location": "Stockholm"
+    },
+    {
+      "name": "Volvo Cars",
+      "fieldOfWork": "Auto",
+      "location": "Gothenburg"
+    },
+    {
+      "name": "Volvo Trucks",
+      "fieldOfWork": "Auto",
+      "location": "Gothenburg"
+    },
+    {
+      "name": "Scania",
+      "fieldOfWork": "Auto",
+      "location": "Sodertalje"
+    },
+    {
+      "name": "H&M",
+      "fieldOfWork": "Fashion",
+      "location": "Stockholm"
+    }
+  ]
+}
