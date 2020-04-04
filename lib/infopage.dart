@@ -23,6 +23,6 @@ class DemandInfoPage extends StatelessWidget {
         child: Text("Company Name: ${company.name}",
             style: TextStyle(fontWeight: FontWeight.bold)))
         ])
-    );
+    ));
   }
 }
