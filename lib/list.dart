@@ -1,84 +1,111 @@
 import 'package:flutter/material.dart';
 import 'package:workforcematch/infopage.dart';
-import 'resources.dart';
-import 'demands.dart';
+import 'package:workforcematch/resources.dart';
+import 'package:workforcematch/demands.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class ResourceList extends StatefulWidget {
-  @override
-  ResourceListState createState() {
-    return ResourceListState();
+class DemandList extends StatelessWidget {
+  static final databaseReference = FirebaseDatabase.instance.reference();
+
+  final futureBuilder = new FutureBuilder(
+      future: DemandViewModel().firebaseCalls(databaseReference),
+      builder: (BuildContext context, AsyncSnapshot snapshot) =>
+          getBuilder(snapshot)
+      );
+
+  static Widget getBuilder(AsyncSnapshot snapshot){
+    switch (snapshot.connectionState) {
+      case ConnectionState.none:
+        return new Text('Press button to start');
+      case ConnectionState.waiting:
+        return new Text('Loading....');
+      default:
+        if (snapshot.hasError) {
+          return Text('Error ${snapshot.error}');
+        } else {
+          return ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (BuildContext context, int index) {
+              final demand = snapshot.data[index];
+              final item = DemandItem(
+                  demand.description,
+                  demand.companyName,
+                  demand.location.toString()
+              );
+              return ListTile(
+                  title: item.buildTitle(context),
+                  subtitle: item.buildSubtitle(context),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DemandInfoPage(company: demand)));
+                  }
+              );
+            },
+          );
+        }
+    }
   }
-}
 
-class DemandList extends StatefulWidget {
-  @override
-  DemandListState createState() {
-    return DemandListState();
-  }
-}
-
-class ResourceListState extends State<ResourceList>
-    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      // Let the ListView know how many items it needs to build.
-      itemCount: ResourceViewModel.resources.length,
-      // Provide a builder function. This is where the magic happens.
-      // Convert each item into a widget based on the type of item it is.
-      itemBuilder: (context, index) {
-        final company = ResourceViewModel.resources[index];
-        final item =
-            ResourceItem(company.name, company.fieldOfWork, company.location);
-
-        return ListTile(
-            title: item.buildTitle(context),
-            subtitle: item.buildSubtitle(context),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ResourceInfoPage(company: company)));
-            });
-      },
-    );
+    return futureBuilder;
   }
 
-  @override
-  bool get wantKeepAlive => true;
 }
 
-class DemandListState extends State<DemandList>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      // Let the ListView know how many items it needs to build.
-      itemCount: DemandViewModel.demands.length,
-      // Provide a builder function. This is where the magic happens.
-      // Convert each item into a widget based on the type of item it is.
-      itemBuilder: (context, index) {
-        final company = DemandViewModel.demands[index];
-        final item = DemandItem(company.name, company.description,
-            company.fieldOfWork, company.location);
+class ResourceList extends StatelessWidget {
+  static final databaseReference = FirebaseDatabase.instance.reference();
 
-        return ListTile(
-          title: item.buildTitle(context),
-          subtitle: item.buildSubtitle(context),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DemandInfoPage(company: company)));
-          },
-        );
-      },
-    );
+  final futureBuilder = new FutureBuilder(
+      future: ResourceViewModel().firebaseCalls(databaseReference),
+      builder: (BuildContext context, AsyncSnapshot snapshot) =>
+          getBuilder(snapshot)
+  );
+
+  static Widget getBuilder(AsyncSnapshot snapshot){
+    switch (snapshot.connectionState) {
+      case ConnectionState.none:
+        return new Text('Press button to start');
+      case ConnectionState.waiting:
+        return new Text('Loading....');
+      default:
+        if (snapshot.hasError) {
+          return Text('Error ${snapshot.error}');
+        } else {
+          return ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (BuildContext context, int index) {
+              final resource = snapshot.data[index];
+              final item = ResourceItem(
+                  resource.companyName,
+                  resource.workArea,
+                  resource.location.toString()
+              );
+              return ListTile(
+                  title: item.buildTitle(context),
+                  subtitle: item.buildSubtitle(context),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ResourceInfoPage(company: resource)));
+                  }
+              );
+            },
+          );
+        }
+    }
   }
 
   @override
-  bool get wantKeepAlive => true;
+  Widget build(BuildContext context) {
+    return futureBuilder;
+  }
+
 }
 
 /// The base class for the different types of items the list can contain.
@@ -104,14 +131,13 @@ class ResourceItem implements ListItem {
 }
 
 class DemandItem implements ListItem {
-  final String name;
   final String description;
-  final String areaOfWork;
+  final String name;
   final String location;
 
-  DemandItem(this.name, this.description, this.areaOfWork, this.location);
+  DemandItem(this.description, this.name, this.location);
 
   Widget buildTitle(BuildContext context) => Text(description);
 
-  Widget buildSubtitle(BuildContext context) => Text("$name, $areaOfWork");
+  Widget buildSubtitle(BuildContext context) => Text("$name, $location");
 }

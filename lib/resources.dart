@@ -1,37 +1,89 @@
 import 'dart:convert';
-
 import 'package:flutter/services.dart';
 
+import 'package:firebase_database/firebase_database.dart';
+
 class Resource {
-  String name;
-  String fieldOfWork;
-  String location;
+  String companyName;
+  String completionRate;
+  String contactName;
+  String contactSurname;
+  String description;
+  String email;
+  String endDate;
+  int location;
+  int numberOfPeople;
+  int phoneNumber;
+  String protectiveEquipment;
+  String startDate;
+  String workArea;
 
-  Resource({ this.name, this.fieldOfWork, this.location });
+  Resource({
+    this.companyName,
+    this.completionRate,
+    this.contactName,
+    this.contactSurname,
+    this.description,
+    this.email,
+    this.endDate,
+    this.location,
+    this.numberOfPeople,
+    this.phoneNumber,
+    this.protectiveEquipment,
+    this.startDate,
+    this.workArea
+  });
 
-  factory Resource.fromJson(Map<String, dynamic> parsedJson) {
+
+  factory Resource.fromJson(Map<dynamic,dynamic> parsedJson) {
     return Resource(
-        name: parsedJson['name'] as String,
-        fieldOfWork: parsedJson['fieldOfWork'] as String,
-        location: parsedJson['location'] as String
+        companyName : parsedJson['CompanyName'],
+        completionRate : parsedJson['CompletionRate'],
+        contactName : parsedJson['ContactName'],
+        contactSurname : parsedJson['ContactSurname'],
+        description : parsedJson['Description'],
+        email : parsedJson['Email'],
+        endDate : parsedJson['EndDate'],
+        location : parsedJson['Location'],
+        numberOfPeople : parsedJson['NumberofPeople'],
+        phoneNumber : parsedJson['Phone'],
+        protectiveEquipment : parsedJson['ProtectiveEquipment'],
+        startDate : parsedJson['StartDate'],
+        workArea: parsedJson['WorkArea']
     );
   }
 }
 
-class ResourceViewModel {
-  static List<Resource> resources;
+class Resources {
+  List<Resource> resources;
 
-  static Future loadResources() async {
-    try {
-      resources = new List<Resource>();
-      String jsonString = await rootBundle.loadString('assets/resources.json');
-      Map parsedJson = json.decode(jsonString);
-      var categoryJson = parsedJson['resources'] as List;
-      for (int i = 0; i < categoryJson.length; i++) {
-        resources.add(Resource.fromJson(categoryJson[i]));
-      }
-    } catch (e) {
-      print(e);
-    }
+  Resources({this.resources});
+
+  factory Resources.fromJSON(Map<dynamic, dynamic> json) {
+    return Resources(resources : parseResources(json));
+  }
+
+  static List<Resource> parseResources(resourcesJson) {
+    List<Resource> resourceList = [];
+
+    resourcesJson['Resources'].forEach((key, value) =>
+        resourceList.add(Resource.fromJson(value))
+    );
+
+    return resourceList;
+  }
+
+}
+
+class ResourceViewModel{
+  List<Resource> resources=[];
+
+  Future<List<Resource>> firebaseCalls (DatabaseReference databaseReference) async{
+    Resources resourceList;
+    DataSnapshot dataSnapshot = await databaseReference.once();
+    Map<dynamic,dynamic> jsonResponse=dataSnapshot.value;
+    resourceList = new Resources.fromJSON( jsonResponse);
+    resources.addAll(resourceList.resources);
+    return resources;
   }
 }

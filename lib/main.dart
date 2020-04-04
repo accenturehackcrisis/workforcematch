@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:workforcematch/demands.dart';
-import 'userform.dart';
-import 'list.dart';
-import 'resources.dart';
+import 'package:workforcematch/userform.dart';
+import 'package:workforcematch/list.dart';
+import 'package:workforcematch/resources.dart';
 
 void main() => runApp(MaterialApp(
     title: 'WorkforceMatch',
@@ -40,17 +39,6 @@ class ListAppState extends State {
               child: Icon(Icons.add),
             ) // This trailing comma makes auto-formatting nicer for build methods
             ));
-  }
-
-  @override
-  void initState() {
-    _loadData();
-    super.initState();
-  }
-
-  void _loadData() async {
-    await DemandViewModel.loadDemands();
-    await ResourceViewModel.loadResources();
   }
 
 }
