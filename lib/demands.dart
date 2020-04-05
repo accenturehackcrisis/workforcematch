@@ -1,27 +1,30 @@
 import 'package:firebase_database/firebase_database.dart';
 
+const STATUS_OPEN = "Open";
+
+
 class Demand {
   String companyName;
   String completionRate;
   String contactName;
-  String contactSurname;
   String description;
   String email;
   String endDate;
   int location;
   int numberOfPeople;
-  int phoneNumber;
+  String phoneNumber;
   String protectiveEquipment;
   String startDate;
   String status;
   String training;
   String workHourSchedule;
+  String skills;
+  String equipment;
 
   Demand({
     this.companyName,
     this.completionRate,
     this.contactName,
-    this.contactSurname,
     this.description,
     this.email,
     this.endDate,
@@ -32,7 +35,9 @@ class Demand {
     this.startDate,
     this.status,
     this.training,
-    this.workHourSchedule
+    this.workHourSchedule,
+    this.skills,
+    this.equipment
   });
 
 
@@ -41,7 +46,6 @@ class Demand {
         companyName : parsedJson['CompanyName'],
         completionRate : parsedJson['CompletionRate'],
         contactName : parsedJson['ContactName'],
-        contactSurname : parsedJson['ContactSurname'],
         description : parsedJson['Description'],
         email : parsedJson['Email'],
         endDate : parsedJson['EndDate'],
@@ -52,9 +56,31 @@ class Demand {
         startDate : parsedJson['StartDate'],
         status : parsedJson['Status'],
         training : parsedJson['Training'],
-        workHourSchedule : parsedJson['WorkHourSchedule']
+        workHourSchedule : parsedJson['WorkHourSchedule'],
+        skills: parsedJson['Skills'],
+        equipment: parsedJson['Equipment']
     );
   }
+
+  Map<String, dynamic> toJson() =>
+      {
+        'CompanyName': companyName,
+        'CompletionRate' : completionRate,
+        'ContactName' : contactName,
+        'Description' : description,
+        'Email' : email,
+        'EndDate' : endDate,
+        'Location' : location,
+        'NumberOfPeople' : numberOfPeople,
+        'PhoneNumber' : phoneNumber,
+        'ProtectiveEquipment' : protectiveEquipment,
+        'StartDate' : startDate,
+        'Status' : status,
+        'Training' : training,
+        'workHourSchedule' : workHourSchedule,
+        'Skills' : skills,
+        'Equipment' : equipment
+      };
 }
 
 class Demands {
@@ -73,6 +99,14 @@ class Demands {
       demandsList.add(Demand.fromJson(value))
     );
 
+    demandsList.sort((a, b) {
+      if(a.status != b.status){
+        return a.status == STATUS_OPEN ? -1 : 1;
+      } else{
+        return a.companyName.compareTo(b.companyName);
+      }
+    });
+
     return demandsList;
   }
 
@@ -88,5 +122,9 @@ class DemandViewModel{
     demandList = new Demands.fromJSON( jsonResponse);
     demands.addAll(demandList.demands);
     return demands;
+  }
+
+  Future pushDemand (DatabaseReference databaseReference, Demand demand) async {
+    databaseReference.push().set( demand.toJson());
   }
 }

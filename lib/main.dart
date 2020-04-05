@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:workforcematch/userform.dart';
 import 'package:workforcematch/list.dart';
-import 'package:workforcematch/resources.dart';
+import 'package:workforcematch/informationpage.dart';
 
 void main() => runApp(MaterialApp(
     title: 'WorkforceMatch',
-    theme: ThemeData(primarySwatch: Colors.green),
+    theme: ThemeData(primarySwatch: Colors.purple),
     home: ListApp()));
 
 class ListApp extends StatefulWidget {
@@ -20,33 +19,23 @@ class ListAppState extends State {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
             appBar: AppBar(
                 title: Text('WorkforceMatch'),
                 bottom: TabBar(tabs: [
                   Tab(text: "Demand"),
-                  Tab(text: "Resources")])),
+                  Tab(text: "Resources"),
+                  Tab(text : "Information")
+                ])),
             body: TabBarView(
               physics: NeverScrollableScrollPhysics(),
-              children: [ DemandList(), ResourceList()]),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FormApp()));
-              },
-              tooltip: 'Increment',
-              child: Icon(Icons.add),
-            ) // This trailing comma makes auto-formatting nicer for build methods
-            ));
-  }
-
-}
-
-class FormApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('Happy to Help')), body: UserForm());
+              children: [ DemandList(), ResourceList(), InformationPage()]),
+            )
+    );
   }
 }
+
+
+
+

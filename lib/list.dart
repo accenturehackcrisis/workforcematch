@@ -1,8 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:workforcematch/infopage.dart';
+import 'package:workforcematch/detailspage.dart';
 import 'package:workforcematch/resources.dart';
 import 'package:workforcematch/demands.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:workforcematch/userform.dart';
 
 class DemandList extends StatelessWidget {
   static final databaseReference = FirebaseDatabase.instance.reference();
@@ -10,10 +11,9 @@ class DemandList extends StatelessWidget {
   final futureBuilder = new FutureBuilder(
       future: DemandViewModel().firebaseCalls(databaseReference),
       builder: (BuildContext context, AsyncSnapshot snapshot) =>
-          getBuilder(snapshot)
-      );
+          getBuilder(snapshot));
 
-  static Widget getBuilder(AsyncSnapshot snapshot){
+  static Widget getBuilder(AsyncSnapshot snapshot) {
     switch (snapshot.connectionState) {
       case ConnectionState.none:
         return new Text('Press button to start');
@@ -28,10 +28,11 @@ class DemandList extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               final demand = snapshot.data[index];
               final item = DemandItem(
-                  demand.description,
-                  demand.companyName,
-                  demand.location.toString()
-              );
+                  description: demand.description,
+                  name: demand.companyName,
+                  location: demand.location.toString(),
+                  status: demand.status,
+                  numberOfPeople: demand.numberOfPeople);
               return ListTile(
                   title: item.buildTitle(context),
                   subtitle: item.buildSubtitle(context),
@@ -40,9 +41,8 @@ class DemandList extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                DemandInfoPage(company: demand)));
-                  }
-              );
+                                DemandDetailsPage(company: demand)));
+                  });
             },
           );
         }
@@ -51,9 +51,16 @@ class DemandList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return futureBuilder;
+    return Scaffold(
+        body: futureBuilder,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => DemandFormApp()));
+          },
+          child: Icon(Icons.add),
+        ));
   }
-
 }
 
 class ResourceList extends StatelessWidget {
@@ -62,10 +69,9 @@ class ResourceList extends StatelessWidget {
   final futureBuilder = new FutureBuilder(
       future: ResourceViewModel().firebaseCalls(databaseReference),
       builder: (BuildContext context, AsyncSnapshot snapshot) =>
-          getBuilder(snapshot)
-  );
+          getBuilder(snapshot));
 
-  static Widget getBuilder(AsyncSnapshot snapshot){
+  static Widget getBuilder(AsyncSnapshot snapshot) {
     switch (snapshot.connectionState) {
       case ConnectionState.none:
         return new Text('Press button to start');
@@ -79,11 +85,8 @@ class ResourceList extends StatelessWidget {
             itemCount: snapshot.data.length,
             itemBuilder: (BuildContext context, int index) {
               final resource = snapshot.data[index];
-              final item = ResourceItem(
-                  resource.companyName,
-                  resource.workArea,
-                  resource.location.toString()
-              );
+              final item = ResourceItem(resource.companyName, resource.workArea,
+                  resource.location.toString(), resource.numberOfPeople);
               return ListTile(
                   title: item.buildTitle(context),
                   subtitle: item.buildSubtitle(context),
@@ -92,9 +95,8 @@ class ResourceList extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ResourceInfoPage(company: resource)));
-                  }
-              );
+                                ResourceDetailsPage(company: resource)));
+                  });
             },
           );
         }
@@ -103,9 +105,16 @@ class ResourceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return futureBuilder;
+    return Scaffold(
+        body: futureBuilder,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ResourceFormApp()));
+          },
+          child: Icon(Icons.add),
+        ));
   }
-
 }
 
 /// The base class for the different types of items the list can contain.
@@ -122,22 +131,32 @@ class ResourceItem implements ListItem {
   final String name;
   final String areaOfWork;
   final String location;
+  final int numberOfPeople;
 
-  ResourceItem(this.name, this.areaOfWork, this.location);
+  ResourceItem(this.name, this.areaOfWork, this.location, this.numberOfPeople);
 
   Widget buildTitle(BuildContext context) => Text(name);
 
-  Widget buildSubtitle(BuildContext context) => Text("$areaOfWork, $location");
+  Widget buildSubtitle(BuildContext context) =>
+      Text("$areaOfWork, $location, $numberOfPeople people");
 }
 
 class DemandItem implements ListItem {
   final String description;
   final String name;
   final String location;
+  final String status;
+  final int numberOfPeople;
 
-  DemandItem(this.description, this.name, this.location);
+  DemandItem(
+      {this.description,
+      this.name,
+      this.location,
+      this.status,
+      this.numberOfPeople});
 
   Widget buildTitle(BuildContext context) => Text(description);
 
-  Widget buildSubtitle(BuildContext context) => Text("$name, $location");
+  Widget buildSubtitle(BuildContext context) =>
+      Text("$name, $location, $numberOfPeople people, $status");
 }
