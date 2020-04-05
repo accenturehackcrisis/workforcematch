@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:workforcematch/demands.dart';
+import 'package:workforcematch/resources.dart';
 
 class DemandFormApp extends StatelessWidget {
   @override
@@ -22,19 +23,22 @@ class DemandUserFormState extends State<DemandUserForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-
   final companyNameController = TextEditingController();
-  final contactNameController = TextEditingController();
   final descriptionController = TextEditingController();
-  final emailController = TextEditingController();
-  final endDateController = TextEditingController();
-  final locationController = TextEditingController();
   final numberOfPeopleController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-  final protectiveEquipmentController = TextEditingController();
+  final locationController = TextEditingController();
   final startDateController = TextEditingController();
-  final trainingController = TextEditingController();
+  final endDateController = TextEditingController();
+
+  final skillsController = TextEditingController();
   final workHourScheduleController = TextEditingController();
+  final protectiveEquipmentController = TextEditingController();
+  final additionalEquipmentController = TextEditingController();
+  final trainingController = TextEditingController();
+
+  final contactNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +49,23 @@ class DemandUserFormState extends State<DemandUserForm> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: ListView(
           children: <Widget>[
-            DemandWorkInformationWidget(),
-            RequirementInformationWidget(),
+            DemandWorkInformationWidget(
+              companyNameController: companyNameController,
+              descriptionController: descriptionController,
+              numberOfPeopleController: numberOfPeopleController,
+              locationController: locationController,
+              startDateController: startDateController,
+              endDateController: endDateController
+            ),
+            RequirementInformationWidget(
+              skillsController: skillsController,
+              workHourScheduleController: workHourScheduleController,
+              protectiveEquipmentController: protectiveEquipmentController,
+              additionalEquipmentController: additionalEquipmentController,
+              trainingController: trainingController
+            ),
             ContactInformationWidget(
                 contactNameController : contactNameController ,
-                companyNameController : companyNameController,
                 emailController : emailController,
                 phoneNumberController : phoneNumberController
             ),
@@ -63,10 +79,21 @@ class DemandUserFormState extends State<DemandUserForm> {
                     // otherwise.
                     if (_formKey.currentState.validate()) {
                       Demand demand = Demand(
-                          contactName: contactNameController.text,
                           companyName: companyNameController.text,
+                          contactName: contactNameController.text,
+                          description: descriptionController.text,
                           email: emailController.text,
-                          phoneNumber: phoneNumberController.text
+                          endDate: endDateController.text,
+                          location: int.parse(locationController.text),
+                          numberOfPeople: int.parse(numberOfPeopleController.text),
+                          phoneNumber: phoneNumberController.text,
+                          protectiveEquipment: protectiveEquipmentController.text,
+                          startDate: startDateController.text,
+                          status : STATUS_OPEN,
+                          training: trainingController.text,
+                          workHourSchedule: workHourScheduleController.text,
+                          skills: skillsController.text,
+                          equipment: additionalEquipmentController.text
                       );
                       pushToDatabase( demand);
                       // If the form is valid, display a Snackbar.
@@ -106,7 +133,23 @@ class ResourceUserForm extends StatefulWidget {
 }
 
 class ResourceUserFormState extends State<ResourceUserForm> {
+  static final databaseReference = FirebaseDatabase.instance.reference();
+
   final _formKey = GlobalKey<FormState>();
+
+  final companyNameController = TextEditingController();
+  final workAreaController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final numberOfPeopleController = TextEditingController();
+  final skillsController = TextEditingController();
+  final locationController = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
+
+  final contactNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +160,21 @@ class ResourceUserFormState extends State<ResourceUserForm> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: ListView(
           children: <Widget>[
-            DemandWorkInformationWidget(),
-            ContactInformationWidget(),
+            ResourceWorkInformationWidget(
+              companyNameController: companyNameController,
+              workAreaController: workAreaController,
+              descriptionController: descriptionController,
+              numberOfPeopleController: numberOfPeopleController,
+              skillsController: skillsController,
+              locationController: locationController,
+              startDateController: startDateController,
+              endDateController: endDateController
+            ),
+            ContactInformationWidget(
+                contactNameController : contactNameController ,
+                emailController : emailController,
+                phoneNumberController : phoneNumberController
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 22.0),
               child: ButtonTheme(
@@ -128,6 +184,21 @@ class ResourceUserFormState extends State<ResourceUserForm> {
                     // Validate returns true if the form is valid, or false
                     // otherwise.
                     if (_formKey.currentState.validate()) {
+                      Resource resource = Resource(
+                        companyName: companyNameController.text,
+                        contactName: contactNameController.text,
+                        description: descriptionController.text,
+                        email: emailController.text,
+                        endDate: endDateController.text,
+                        location: int.parse(locationController.text),
+                        numberOfPeople: int.parse(numberOfPeopleController.text),
+                        phoneNumber: phoneNumberController.text,
+                        startDate: startDateController.text,
+                        workArea: workAreaController.text,
+                        skills: skillsController.text
+                      );
+                      pushToDatabase(resource);
+
                       // If the form is valid, display a Snackbar.
                       Scaffold.of(context).showSnackBar(
                           SnackBar(content: Text('Processing Data')));
@@ -142,18 +213,21 @@ class ResourceUserFormState extends State<ResourceUserForm> {
       ),
     );
   }
+
+  void pushToDatabase(Resource resource) async{
+    await ResourceViewModel().pushResource(databaseReference, resource);
+  }
+
 }
 
 class ContactInformationWidget extends StatelessWidget {
   final contactNameController;
-  final companyNameController;
   final emailController;
   final phoneNumberController;
 
 
   ContactInformationWidget({
     this.contactNameController,
-    this.companyNameController,
     this.emailController,
     this.phoneNumberController
   });
@@ -184,7 +258,23 @@ class ContactInformationWidget extends StatelessWidget {
 }
 
 class DemandWorkInformationWidget extends StatelessWidget {
-  @override
+  final companyNameController;
+  final descriptionController;
+  final numberOfPeopleController;
+  final locationController;
+  final startDateController;
+  final endDateController;
+
+  DemandWorkInformationWidget({
+    this.companyNameController,
+    this.descriptionController,
+    this.numberOfPeopleController,
+    this.locationController,
+    this.startDateController,
+    this.endDateController
+  });
+
+
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Padding(
@@ -193,26 +283,60 @@ class DemandWorkInformationWidget extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold))),
       EditTextContainer(
           labelText: "Company",
-          warningText: "Please enter your company name"
+          warningText: "Please enter your company name",
+          controller: companyNameController
       ),
       EditTextContainer(
           labelText: "Description",
-          warningText: "Please enter a description"),
+          warningText: "Please enter a description",
+          controller: descriptionController
+      ),
       EditTextContainer(
           labelText: "Number of People",
-          warningText: "Please enter number of People"),
+          warningText: "Please enter number of People",
+          controller: numberOfPeopleController
+      ),
       EditTextContainer(
           labelText: "Location (Postal code)",
-          warningText: "Please enter a postal code"),
+          warningText: "Please enter a postal code",
+          controller: locationController
+      ),
       EditTextContainer(
-          labelText: "Start Date", warningText: "Please enter a Start Date"),
+          labelText: "Start Date",
+          warningText: "Please enter a Start Date",
+          controller: startDateController
+      ),
       EditTextContainer(
-          labelText: "End Date", warningText: "Please enter an end Date"),
+          labelText: "End Date",
+          warningText: "Please enter an end Date",
+          controller: endDateController
+      )
     ]);
   }
 }
 
 class ResourceWorkInformationWidget extends StatelessWidget {
+  final companyNameController;
+  final workAreaController;
+  final descriptionController ;
+  final numberOfPeopleController;
+  final skillsController;
+  final locationController;
+  final startDateController;
+  final endDateController;
+
+  ResourceWorkInformationWidget({
+    this.companyNameController,
+    this.workAreaController,
+    this.descriptionController,
+    this.numberOfPeopleController,
+    this.skillsController,
+    this.locationController,
+    this.startDateController,
+    this.endDateController
+  });
+
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
@@ -222,36 +346,61 @@ class ResourceWorkInformationWidget extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold))),
       EditTextContainer(
           labelText: "Company",
-          warningText: "Please enter your company name"
+          warningText: "Please enter your company name",
+          controller: companyNameController,
       ),
       EditTextContainer(
           labelText: "Work Area",
-          warningText: "Please enter your work area"
+          warningText: "Please enter your work area",
+          controller: workAreaController,
       ),
       EditTextContainer(
           labelText: "Description",
-          warningText: "Please enter a description"),
+          warningText: "Please enter a description",
+          controller: descriptionController
+      ),
       EditTextContainer(
           labelText: "Number of People",
-          warningText: "Please enter number of People"),
+          warningText: "Please enter number of People",
+        controller: numberOfPeopleController),
       EditTextContainer(
           labelText: "Skill",
-          warningText: "Please enter your skills"
+          warningText: "Please enter your skills",
+          controller: skillsController,
       ),
       EditTextContainer(
           labelText: "Location (Postal code)",
-          warningText: "Please enter a postal code"),
+          warningText: "Please enter a postal code",
+          controller: locationController,
+      ),
       EditTextContainer(
-          labelText: "Start Date", warningText: "Please enter a Start Date"),
+          labelText: "Start Date",
+          warningText: "Please enter a Start Date",
+          controller: startDateController,
+      ),
       EditTextContainer(
-          labelText: "End Date", warningText: "Please enter an end Date"),
+          labelText: "End Date",
+          warningText: "Please enter an end Date",
+          controller: endDateController,
+      ),
     ]);
   }
 }
 
 class RequirementInformationWidget extends StatelessWidget {
-  final skillText;
-  RequirementInformationWidget({this.skillText});
+  final skillsController;
+  final workHourScheduleController;
+  final protectiveEquipmentController;
+  final additionalEquipmentController;
+  final trainingController;
+
+  const RequirementInformationWidget({
+    this.skillsController,
+    this.workHourScheduleController,
+    this.protectiveEquipmentController,
+    this.additionalEquipmentController,
+    this.trainingController
+  });
 
 
   @override
@@ -263,18 +412,30 @@ class RequirementInformationWidget extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold))),
       EditTextContainer(
           labelText: "Skills Needed",
-          warningText: "Please enter a number of skills"),
+          warningText: "Please enter a number of skills",
+          controller: skillsController
+      ),
       EditTextContainer(
-          labelText: "Work Hours", warningText: "What are the work hours?"),
+          labelText: "Work Hours",
+          warningText: "What are the work hours?",
+          controller: workHourScheduleController
+      ),
       EditTextContainer(
-          labelText: "Protective Equipment", warningText: "Do you need any Protective Equipment?"),
-      EditTextContainer(
-          labelText: "Additional Equipment", warningText: "Do you need any additional Equipment?"),
-      EditTextContainer(
-          labelText: "Training", warningText: "Does it require any Training?"),
-      EditTextContainer(
-          labelText: "Schedule", warningText: "What's the schedule?"),
+          labelText: "Protective Equipment",
+          warningText: "Do you need any Protective Equipment?",
+          controller: protectiveEquipmentController
 
+      ),
+      EditTextContainer(
+          labelText: "Additional Equipment",
+          warningText: "Do you need any additional Equipment?",
+          controller: additionalEquipmentController
+      ),
+      EditTextContainer(
+          labelText: "Training",
+          warningText: "Does it require any Training?",
+          controller: trainingController
+      ),
       ]);
   }
 }

@@ -130,7 +130,6 @@ class RequirementInformation extends StatelessWidget {
                 value: company.equipment
             ),
             InfoText(type: "Training Required:", value: company.training),
-            InfoText(type: "Schedule", value: company.workHourSchedule)
           ],
         ));
   }

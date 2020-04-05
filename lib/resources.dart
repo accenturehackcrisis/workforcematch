@@ -43,6 +43,21 @@ class Resource {
         skills: parsedJson['Skills']
     );
   }
+
+  Map<String, dynamic> toJson() =>
+      {
+        'CompanyName': companyName,
+        'ContactName' : contactName,
+        'Description' : description,
+        'Email' : email,
+        'EndDate' : endDate,
+        'Location' : location,
+        'NumberofPeople' : numberOfPeople,
+        'Phone' : phoneNumber,
+        'StartDate' : startDate,
+        'WorkArea' : workArea,
+        'Skills' : skills,
+      };
 }
 
 class Resources {
@@ -86,4 +101,8 @@ class ResourceViewModel {
     resources.addAll(resourceList.resources);
     return resources;
   }
+  Future pushResource (DatabaseReference databaseReference, Resource resource) async {
+    databaseReference.child("Resources").push().set( resource.toJson());
+  }
+
 }

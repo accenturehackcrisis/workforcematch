@@ -5,7 +5,6 @@ const STATUS_OPEN = "Open";
 
 class Demand {
   String companyName;
-  String completionRate;
   String contactName;
   String description;
   String email;
@@ -23,7 +22,6 @@ class Demand {
 
   Demand({
     this.companyName,
-    this.completionRate,
     this.contactName,
     this.description,
     this.email,
@@ -44,7 +42,6 @@ class Demand {
   factory Demand.fromJson(Map<dynamic,dynamic> parsedJson) {
     return Demand(
         companyName : parsedJson['CompanyName'],
-        completionRate : parsedJson['CompletionRate'],
         contactName : parsedJson['ContactName'],
         description : parsedJson['Description'],
         email : parsedJson['Email'],
@@ -65,19 +62,18 @@ class Demand {
   Map<String, dynamic> toJson() =>
       {
         'CompanyName': companyName,
-        'CompletionRate' : completionRate,
         'ContactName' : contactName,
         'Description' : description,
         'Email' : email,
         'EndDate' : endDate,
         'Location' : location,
-        'NumberOfPeople' : numberOfPeople,
-        'PhoneNumber' : phoneNumber,
+        'NumberofPeople' : numberOfPeople,
+        'Phone' : phoneNumber,
         'ProtectiveEquipment' : protectiveEquipment,
         'StartDate' : startDate,
         'Status' : status,
         'Training' : training,
-        'workHourSchedule' : workHourSchedule,
+        'WorkHourSchedule' : workHourSchedule,
         'Skills' : skills,
         'Equipment' : equipment
       };
@@ -125,6 +121,6 @@ class DemandViewModel{
   }
 
   Future pushDemand (DatabaseReference databaseReference, Demand demand) async {
-    databaseReference.push().set( demand.toJson());
+    databaseReference.child("Demands").push().set( demand.toJson());
   }
 }
