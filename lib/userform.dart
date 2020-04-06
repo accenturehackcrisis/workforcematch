@@ -74,6 +74,7 @@ class DemandUserFormState extends State<DemandUserForm> {
               child: ButtonTheme(
                 minWidth: double.infinity,
                 child: RaisedButton(
+                  textColor: Colors.white,
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.
@@ -96,9 +97,7 @@ class DemandUserFormState extends State<DemandUserForm> {
                           equipment: additionalEquipmentController.text
                       );
                       pushToDatabase( demand);
-                      // If the form is valid, display a Snackbar.
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(content: Text('Processing Data')));
+                      Navigator.pop(context);
                     }
                   },
                   child: Text('Submit'),
@@ -180,6 +179,7 @@ class ResourceUserFormState extends State<ResourceUserForm> {
               child: ButtonTheme(
                 minWidth: double.infinity,
                 child: RaisedButton(
+                  textColor: Colors.white,
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.
@@ -198,10 +198,7 @@ class ResourceUserFormState extends State<ResourceUserForm> {
                         skills: skillsController.text
                       );
                       pushToDatabase(resource);
-
-                      // If the form is valid, display a Snackbar.
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(content: Text('Processing Data')));
+                      Navigator.pop(context);
                     }
                   },
                   child: Text('Submit'),
